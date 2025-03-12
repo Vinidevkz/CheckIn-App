@@ -12,6 +12,8 @@ import {
   StatusBar
 } from "react-native";
 
+import { useRouter } from "expo-router";
+
 import colors from "@/src/styles/colors";
 import texts from "@/src/styles/texts";
 
@@ -49,6 +51,8 @@ export default function Index() {
     });
   };
 
+  const router = useRouter()
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
         <StatusBar
@@ -75,27 +79,28 @@ export default function Index() {
 
         <View style={s.container}>
             <Button
-            title="Cadastre-se"
-            titleC={colors.white}
-            bgColor=""
-            borderW={2}
-            borderR={20}
-            borderC={colors.white}
+              title="Cadastre-se"
+              titleC={colors.white}
+              bgColor=""
+              borderW={2}
+              borderR={20}
+              borderC={colors.white}
+              onPress={() => router.push('/logon')}
             />
             <Button
-            title="Login"
-            titleC={colors.fullBlack}
-            bgColor={colors.white}
-            borderW={2}
-            borderR={20}
-            borderC={colors.white}
+              title="Login"
+              titleC={colors.fullBlack}
+              bgColor={colors.white}
+              borderW={2}
+              borderR={20}
+              borderC={colors.white}
             />
 
             <View style={s.container}>
             <Text
                 style={[texts.legend, { color: colors.white, textAlign: "center" }]}
             >
-                Vinicius Eduardo 2025. Todos os direitos reservados.{`\n`}
+                Vinicius Eduardo 2025. Todos os direitos reservados.
             </Text>
             <View
                 style={{
