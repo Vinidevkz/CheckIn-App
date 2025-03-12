@@ -11,9 +11,9 @@ interface ButtonProps {
     iconLib?: any,
     width?: DimensionValue,
     bgColor?: string,
-    borderW: number,
-    borderR: number,
-    borderC: string,
+    borderW?: number,
+    borderR?: number,
+    borderC?: string,
     isLoading?: boolean,
     onPress?: () => void
 }

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   SafeAreaView,
   Alert,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
 } from "react-native";
 
 import { useRouter } from "expo-router";
@@ -23,6 +23,7 @@ import { Entypo, FontAwesome6, AntDesign } from "@expo/vector-icons";
 import Button from "@/src/components/button";
 
 export default function Index() {
+  
   const openLinkGitHub = () => {
     const link = "https://github.com/Vinidevkz";
     Linking.openURL(link).catch((err) => {
@@ -51,91 +52,95 @@ export default function Index() {
     });
   };
 
-  const router = useRouter()
+  const router = useRouter();
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
-        <StatusBar
-            translucent={true}
-            backgroundColor="transparent"
-            barStyle="light-content"
-        />
-        <ImageBackground
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <StatusBar
+        translucent={true}
+        backgroundColor="transparent"
+        barStyle="light-content"
+      />
+      <ImageBackground
         source={require("@/src/img/cinemabg.jpg")}
         resizeMode="cover"
         style={s.Background}
         imageStyle={{ opacity: 0.2 }}
-        >
+      >
         <View style={s.container}>
-            <Image
+          <Image
             source={require("@/src/img/logo.png")}
             resizeMode="contain"
             style={{ width: "100%", height: "30%" }}
-            />
-            <Text style={[texts.subtitle2, { color: colors.white }]}>
+          />
+          <Text style={[texts.subtitle2, { color: colors.white }]}>
             o próximo nível do cinema.
-            </Text>
+          </Text>
         </View>
 
         <View style={s.container}>
-            <Button
-              title="Cadastre-se"
-              titleC={colors.white}
-              bgColor=""
-              borderW={2}
-              borderR={20}
-              borderC={colors.white}
-              onPress={() => router.push('/logon')}
-            />
-            <Button
-              title="Login"
-              titleC={colors.fullBlack}
-              bgColor={colors.white}
-              borderW={2}
-              borderR={20}
-              borderC={colors.white}
-            />
+          <Button
+            title="Cadastre-se"
+            titleC={colors.white}
+            bgColor=""
+            borderW={2}
+            borderR={20}
+            borderC={colors.white}
+            onPress={() => router.push("/logon")}
+          />
+          <Button
+            title="Login"
+            titleC={colors.fullBlack}
+            bgColor={colors.white}
+            borderW={2}
+            borderR={20}
+            borderC={colors.white}
+            onPress={() => router.push("/login")}
+          />
 
-            <View style={s.container}>
+          <View style={s.container}>
             <Text
-                style={[texts.legend, { color: colors.white, textAlign: "center" }]}
+              style={[
+                texts.legend,
+                { color: colors.white, textAlign: "center" },
+              ]}
             >
-                Vinicius Eduardo 2025. Todos os direitos reservados.
+              Vinicius Eduardo 2025. Todos os direitos reservados.
             </Text>
             <View
-                style={{
+              style={{
                 width: "100%",
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "space-between",
-                }}
+              }}
             >
-                <TouchableOpacity
+              <TouchableOpacity
                 style={{ alignItems: "center", justifyContent: "center" }}
                 onPress={openLinkGitHub}
-                >
+              >
                 <Entypo name="github" size={24} color={colors.white} />
-                </TouchableOpacity>
-                <TouchableOpacity
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={{ alignItems: "center", justifyContent: "center" }}
                 onPress={openLinkX}
-                >
+              >
                 <FontAwesome6 name="x-twitter" size={24} color={colors.white} />
-                </TouchableOpacity>
-                <TouchableOpacity
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={{ alignItems: "center", justifyContent: "center" }}
                 onPress={openLinkLinkedIn}
-                >
+              >
                 <AntDesign
-                    name="linkedin-square"
-                    size={24}
-                    color={colors.white}
+                  name="linkedin-square"
+                  size={24}
+                  color={colors.white}
                 />
-                </TouchableOpacity>
+              </TouchableOpacity>
             </View>
-            </View>
+          </View>
         </View>
-        </ImageBackground>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
