@@ -9,7 +9,7 @@ import colors from '@/src/styles/colors'
 interface InputProps {
     maxLen?: number,
     security?: boolean,
-    onChange?: () => void
+    onChange?: (text: string) => void
 }
 
 const Input: React.FC<InputProps> = ({maxLen, security = false, onChange, ...rest}) => {
