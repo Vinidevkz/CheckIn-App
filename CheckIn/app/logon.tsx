@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   Text,
+  TouchableOpacity
 } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
@@ -36,7 +37,7 @@ export default function Logon() {
             />
           </View>
         }
-        element2={
+        element3={
           <Text style={[texts.subtitle1, { color: colors.white }]}>
             Cadastro
           </Text>
@@ -80,6 +81,9 @@ export default function Logon() {
           bgColor={colors.white}
           borderR={10}
         />
+        <TouchableOpacity style={{alignSelf: 'center', backgroundColor: 'red', borderRadius: 20, width: 150, alignItems: 'center', justifyContent: 'center', padding: 20}} onPress={() => route.push('/(tabs)')}>
+          <Text style={texts.subtitle1}>HOME</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

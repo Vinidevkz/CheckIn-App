@@ -41,7 +41,7 @@ export default function Login() {
             />
           </View>
         }
-        element2={
+        element3={
           <Text style={[texts.subtitle1, { color: colors.white }]}>Login</Text>
         }
       />

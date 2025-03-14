@@ -9,13 +9,15 @@ import colors from '@/src/styles/colors'
 interface HeaderProps {
     element1?: any,
     element2?: any,
+    element3?: any,
 }
 
-const Header: React.FC<HeaderProps> = ({element1, element2, ...rest}) => {
+const Header: React.FC<HeaderProps> = ({element1, element2, element3, ...rest}) => {
     return(
         <View style={s.container}>
             {element1}
             {element2}
+            {element3}
         </View>
     )
 }
