@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
-import {Octicons, MaterialIcons} from '@expo/vector-icons'
+import {Octicons, MaterialIcons, AntDesign} from '@expo/vector-icons'
 import colors from '@/src/styles/colors';
 import texts from '@/src/styles/texts';
 
@@ -11,12 +11,22 @@ import Button from '@/src/components/button';
 
 export default function Index() {
 
-  const Movies = [{
-    "idMovie": 1,
-    "titleMovie": "Avengers: Doomsday",
-    "movieDesc": "O destino está chegando.",
-    "dateLanc": "01/01/2026"
-  }]
+  const Movies = [
+    {
+      "idMovie": 1,
+      "titleMovie": "The Batman",
+      "moviePoster": "https://cdn.awsli.com.br/2500x2500/1610/1610163/produto/177680691/poster-the-batman-j-4033ffcb.jpg",
+      "movieDesc": "Após dois anos espreitando as ruas como Batman, Bruce Wayne se encontra nas profundezas mais sombrias de Gotham City.",
+      "dateLanc": "01/01/2026"
+    },
+    {
+      "idMovie": 2,
+      "titleMovie": "Capitão América: Admirável Mundo Novo",
+      "moviePoster": "https://br.web.img2.acsta.net/img/56/0c/560c72bf877f88472877898cebe00ff0.jpg",
+      "movieDesc": "Sam se vê no meio de um incidente internacional após se encontrar com o Presidente Thaddeus Ross.",
+      "dateLanc": "01/01/2026"
+    } 
+  ]
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
@@ -47,32 +57,41 @@ export default function Index() {
           </View>
 
           <FlatList
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
             style={{paddingLeft: 10, alignSelf: 'flex-start'}}
             data={Movies}
             renderItem={({item}) => (
               <View style={s.movieContainer}>
                 <View style={s.moviePosterCont}>
                   <Image
-                    source={{uri:'https://br.web.img3.acsta.net/c_640_360/img/1c/95/1c95b87e952cabc95947d262a4ed4781.jpg'}}
+                    source={{uri: item.moviePoster}}
                     resizeMode='cover'
                     style={{width: '100%', height: '100%'}}
                   />
                 </View>
 
-                <View style={s.movieInfo}>
-                  <Text style={[texts.subtitle2, {color: colors.white}]} numberOfLines={1}>{item.titleMovie}</Text>
-                  <Text style={[texts.text, {color: colors.white}]} numberOfLines={2}>{item.movieDesc}</Text>
-                  <Text style={[texts.legend, {color: colors.white}]}>{item.dateLanc}</Text>
+                <View style={{justifyContent: 'space-between', margin: 10, flex: 1}}>
+                  <View style={s.movieInfo}>
+                    <Text style={[texts.subtitle2, {color: colors.white}]} numberOfLines={1}>{item.titleMovie}</Text>
+                    <Text style={[texts.text, {color: colors.white}]} numberOfLines={2}>{item.movieDesc}</Text>
+                  </View>
 
-
-                  <Button
-                    bgColor={colors.white}
-                    title='Ver Mais'
-                    borderR={20}
-                  />
-
+                  <View >
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                      <Text style={[texts.legend, {color: colors.white}]}>{item.dateLanc}</Text>
+                      <Text style={[texts.legend, {color: colors.white}]}><AntDesign name="star" size={24} color="#ffd86b" /> 45</Text>
+                    </View>
+                    <Button
+                        bgColor={colors.white}
+                        title='Ver Mais'
+                        borderR={20}
+                        width={'100%'}
+                        height={40}
+                        padding={10}
+                    />
+                  </View>
                 </View>
-
 
               </View>
             )}
@@ -101,21 +120,23 @@ const s = StyleSheet.create({
   },
 
   movieContainer: {
-    height: 330,
-    width: 230,
+    flexDirection: 'row',
+    width: 350,
+
     borderRadius: 15,
     backgroundColor: colors.darkGray,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    marginRight: 15,
   },
 
   moviePosterCont: {
-    width: '100%',
-    height: '50%',
-    backgroundColor: colors.gray
+    width: '40%',
+    height: '100%',
+    backgroundColor: colors.gray,
+    overflow: 'hidden'
   },
 
   movieInfo: {
-    padding: 10,
-    gap: 5
+    gap: 5,
   }
 });

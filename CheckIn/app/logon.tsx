@@ -20,6 +20,7 @@ import { useRouter } from "expo-router";
 import Input from "@/src/components/input";
 import Header from "@/src/components/header";
 import Button from "@/src/components/button";
+import Loading from '@/src/components/loading';
 
 //urls
 import axios from "axios";
@@ -45,8 +46,8 @@ export default function Logon() {
 
     if(!nameUser || !emailUser || !passwordUser || !cpfUser || !ageUser){
       Alert.alert("Campos obrigatórios.", "Preencha todos os campos.")
-    }
-
+    }else{
+      setIsLoading(true),
       axios.post(url, {
         nameUser: nameUser,
         emailUser: emailUser,
@@ -57,7 +58,6 @@ export default function Logon() {
       .then(response => {
         const {newUser, token} = response.data;
 
-        setIsLoading(true),
         AsyncStorage.setItem('user', newUser.toString()),
         AsyncStorage.setItem('token', token.toString()),
         route.push('/(tabs)'),
@@ -65,10 +65,26 @@ export default function Logon() {
       }
 
       )
-      .catch(error => (
-        Alert.alert("Erro ao se cadastrar.", "Houve um erro ao tenta realizar o cadastro. Tente novamente mais tarde."),
-        console.log('Erro: ', error)
-      ))
+      .catch(error => {
+        setIsLoading(false)
+
+        if(error.response){
+          Alert.alert("Erro ao se cadastrar.", "Verifique o email e o CPF, eles podem estar incorretos ou já cadastrados."),
+          console.log('Erro do servidor:', error.response.data); 
+          console.log('Mensagem:', error.response.data.message);
+          console.log('Detalhes:', error.response.data.details);
+        }else if(error.request){
+          Alert.alert('Erro de rede ou servidor inativo', 'Verifique sua conexão com a internet.'),
+          console.log('Erro de rede ou servidor inativo:', error.request);
+        } else{
+          Alert.alert("Erro ao se cadastrar.", "Houve um erro ao tenta realizar o cadastro. Tente novamente mais tarde."),
+          console.log('Erro inesperado:', error.message);
+        }
+
+      })
+    }
+
+
 
   }
 
@@ -94,6 +110,7 @@ export default function Logon() {
           </Text>
         }
       />
+      <Loading isLoading={isLoading}/>
       <ScrollView>
         <View style={s.container}>
           <View style={s.inputCont}>

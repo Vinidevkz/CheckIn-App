@@ -10,6 +10,8 @@ interface ButtonProps {
     icon?: string,
     iconLib?: any,
     width?: DimensionValue,
+    height?: DimensionValue,
+    padding?: number,
     bgColor?: string,
     borderW?: number,
     borderR?: number,
@@ -18,11 +20,11 @@ interface ButtonProps {
     onPress?: () => void
 }
 
-const Button: React.FC<ButtonProps> = ({title, titleC, width = '100%', icon, iconLib: IconLib, bgColor, borderW, borderR, borderC, onPress, isLoading, ...rest}) => {
+const Button: React.FC<ButtonProps> = ({title, titleC, width = '100%', height, padding = 15, icon, iconLib: IconLib, bgColor, borderW, borderR, borderC, onPress, isLoading, ...rest}) => {
     return(
         <TouchableOpacity
             activeOpacity={0.7}
-            style={{width: width, backgroundColor: bgColor, borderWidth: borderW, borderRadius: borderR, borderColor: borderC, alignItems: 'center', justifyContent: 'center', padding: 15}}
+            style={{width: width, height: height, backgroundColor: bgColor, borderWidth: borderW, borderRadius: borderR, borderColor: borderC, alignItems: 'center', justifyContent: 'center', padding: padding}}
             {...rest}
             onPress={onPress}
         >

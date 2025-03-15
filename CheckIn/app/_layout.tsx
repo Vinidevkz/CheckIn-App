@@ -27,9 +27,12 @@ export default function RootLayoutNav() {
   });
 
   if(!fontsLoaded){
-    <View style={{}}>
-      <ActivityIndicator size={'large'} color={Colors.white}/>
-    </View>
+    return(
+      <View style={{flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator size={'large'} color={Colors.white}/>
+      </View>
+    )
+
   }
 
   return (
