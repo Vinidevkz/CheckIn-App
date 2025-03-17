@@ -26,7 +26,7 @@ const s = StyleSheet.create({
     container: {
         paddingTop: marginTopValue + 10,
         flexDirection: 'row',
-        height: 120,
+        height: 100,
         backgroundColor: colors.bgContainer,
         elevation: 15,
         alignItems: 'center',

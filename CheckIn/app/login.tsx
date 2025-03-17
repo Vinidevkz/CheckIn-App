@@ -21,10 +21,6 @@ export default function Login() {
 
   const route = useRouter();
 
-  const logon = async () => {
-    
-  }
-
   return (
     <SafeAreaView style={{ backgroundColor: colors.background, flex: 1 }}>
       <Header
@@ -33,7 +29,8 @@ export default function Login() {
             <Button
               icon="arrow-left"
               iconLib={Feather}
-              bgColor=""
+              iconSize={15}
+              height={50}
               borderW={1}
               borderC={colors.gray}
               borderR={15}

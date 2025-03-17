@@ -94,10 +94,10 @@ export default function Logon() {
           .then((response) => {
             const { newUser, token } = response.data;
 
-            AsyncStorage.setItem("user", newUser.toString()),
-              AsyncStorage.setItem("token", token.toString()),
-              route.push("/(tabs)"),
-              setIsLoading(false);
+            AsyncStorage.setItem("user", JSON.stringify(newUser)),
+            AsyncStorage.setItem("token", JSON.stringify(token)),
+            route.push("/(tabs)"),
+            setIsLoading(false);
           })
           .catch((error) => {
             setIsLoading(false);
@@ -135,7 +135,8 @@ export default function Logon() {
             <Button
               icon="arrow-left"
               iconLib={Feather}
-              bgColor=""
+              iconSize={15}
+              height={50}
               borderW={1}
               borderC={colors.gray}
               borderR={15}
@@ -149,9 +150,6 @@ export default function Logon() {
           </Text>
         }
       />
-      <Text style={{ color: colors.white }}>
-        {cpfUser}, {ageUser}
-      </Text>
       <Loading isLoading={isLoading} />
       <ScrollView>
         <View style={s.container}>

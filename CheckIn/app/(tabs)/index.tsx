@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet, StatusBar } from 'react-native';
 
 import {Octicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons'
 import colors from '@/src/styles/colors';
@@ -49,6 +49,11 @@ export default function Index() {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
+                <StatusBar
+            translucent={true}
+            backgroundColor="transparent"
+            barStyle="light-content"
+          />
       <Header
         element1={(
           <TouchableOpacity activeOpacity={0.7}>

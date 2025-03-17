@@ -10,6 +10,7 @@ export default function TabLayout() {
 
   let iconSize = 20
 
+
   return (
     <Tabs
       screenOptions={{
@@ -25,10 +26,10 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontFamily: texts.text.fontFamily,
-          fontSize: texts.text.fontSize
+          fontSize: texts.text.fontSize -3
         },
         tabBarIconStyle: {
-          fontSize: 20
+          fontSize: 10
         }
       }}
       
@@ -36,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Index",
+          title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => <Octicons name="home" color={color} size={iconSize}  />,
         }}

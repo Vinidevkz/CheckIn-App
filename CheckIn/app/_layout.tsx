@@ -5,6 +5,8 @@ import { Stack } from 'expo-router';
 
 import Colors from '@/src/styles/colors'
 
+import { AuthProvider } from '@/src/contexts/userContext';
+
 import {
   useFonts,
   Poppins_200ExtraLight,
@@ -26,23 +28,23 @@ export default function RootLayoutNav() {
     Poppins_900Black,
   });
 
-  if(!fontsLoaded){
-    return(
-      <View style={{flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center'}}>
-        <ActivityIndicator size={'large'} color={Colors.white}/>
-      </View>
-    )
 
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size={'large'} color={Colors.white} />
+      </View>
+    );
   }
 
   return (
+    <AuthProvider>
       <Stack initialRouteName='index'>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="logon" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
+    </AuthProvider>
   );
 }
-
-
