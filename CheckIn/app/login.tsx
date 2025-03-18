@@ -30,6 +30,7 @@ export default function Login() {
               icon="arrow-left"
               iconLib={Feather}
               iconSize={15}
+              width={50}
               height={50}
               borderW={1}
               borderC={colors.gray}

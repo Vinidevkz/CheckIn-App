@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import * as ImagePicker from "expo-image-picker";
+
 import { Feather } from "@expo/vector-icons";
 import texts from "@/src/styles/texts";
 import colors from "@/src/styles/colors";
@@ -29,11 +31,13 @@ import UserURLs from "@/src/services/urls/userUrls";
 
 //storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ColorSpace } from "react-native-reanimated";
+import { uploadImageToFirebase } from "@/src/services/firebase/uploadImage";
+
 
 export default function Logon() {
   const route = useRouter();
 
+  const [iconImg, setIconImg] = useState<string>("");
   const [nameUser, setNameUser] = useState<string>("");
   const [emailUser, setEmailUser] = useState<string>("");
   const [passwordUser, setPasswordUser] = useState<string>("");
@@ -78,55 +82,92 @@ export default function Logon() {
     userRegister();
   };
 
-  const userRegister = () => {
+  const pickImage = async () => {
+    const {status} = await ImagePicker.requestCameraPermissionsAsync()
+
+    if(status !== "granted"){
+      Alert.alert("Aviso", "Permissão negada.")
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images",
+      allowsEditing: true,
+      quality: 1,
+    })
+
+    if(!result.canceled){
+      console.log("Url da Imagem:", iconImg)
+      setIconImg(result.assets[0].uri)
+    }
+  };
+
+  const userRegister = async () => {
     const url = UserURLs.logon;
 
     if (!nameUser || !emailUser || !passwordUser || !cpfUser || !ageUser) {
       Alert.alert("Campos obrigatórios.", "Preencha todos os campos.");
-    } else {
-      setIsLoading(true),
-        axios
-          .post(url, {
-            nameUser: nameUser,
-            emailUser: emailUser,
-            passwordUser: passwordUser,
-            cpfUser: cpfUser,
-            dataNasc: ageUser,
-          })
-          .then((response) => {
-            const { newUser, token } = response.data;
-
-            AsyncStorage.setItem("user", JSON.stringify(newUser)),
-            AsyncStorage.setItem("token", JSON.stringify(token)),
-            route.push("/(tabs)"),
-            setIsLoading(false);
-          })
-          .catch((error) => {
-            setIsLoading(false);
-
-            if (error.response) {
-              Alert.alert(
-                "Erro ao se cadastrar.",
-                "Verifique o email e o CPF, eles podem estar incorretos ou já cadastrados."
-              ),
-                console.log("Erro do servidor:", error.response.data);
-              console.log("Mensagem:", error.response.data.message);
-              console.log("Detalhes:", error.response.data.details);
-            } else if (error.request) {
-              Alert.alert(
-                "Erro de rede ou servidor inativo",
-                "Verifique sua conexão com a internet."
-              ),
-                console.log("Erro de rede ou servidor inativo:", error.request);
-            } else {
-              Alert.alert(
-                "Erro ao se cadastrar.",
-                "Houve um erro ao tenta realizar o cadastro. Tente novamente mais tarde."
-              ),
-                console.log("Erro inesperado:", error.message);
-            }
-          });
     }
+    setIsLoading(true)
+
+    try {
+      const imageUrl = await uploadImageToFirebase(iconImg);
+
+      if (!imageUrl) {
+        console.log(imageUrl)
+        Alert.alert("Erro inesperado.", "Houve um erro com a imagem selecionada, tente novamente mais tarde.");
+        return;
+      }
+      axios
+        .post(url, {
+          iconUser: imageUrl,
+          nameUser: nameUser,
+          emailUser: emailUser,
+          passwordUser: passwordUser,
+          cpfUser: cpfUser,
+          dataNasc: ageUser,
+        })
+        .then((response) => {
+          const { newUser, token } = response.data;
+
+          AsyncStorage.setItem("user", JSON.stringify(newUser)),
+          AsyncStorage.setItem("token", JSON.stringify(token)),
+          route.push("/(tabs)"),
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          setIsLoading(false);
+
+          if (error.response) {
+            Alert.alert(
+              "Erro ao se cadastrar.",
+              "Verifique o email e o CPF, eles podem estar incorretos ou já cadastrados."
+            ),
+              console.log("Erro do servidor:", error.response.data);
+            console.log("Mensagem:", error.response.data.message);
+            console.log("Detalhes:", error.response.data.details);
+          } else if (error.request) {
+            Alert.alert(
+              "Erro de rede ou servidor inativo",
+              "Verifique sua conexão com a internet."
+            ),
+              console.log("Erro de rede ou servidor inativo:", error.request);
+          } else {
+            Alert.alert(
+              "Erro ao se cadastrar.",
+              "Houve um erro ao tenta realizar o cadastro. Tente novamente mais tarde."
+            ),
+              console.log("Erro inesperado:", error.message);
+          }
+        });
+    } catch (error) {
+      Alert.alert("Houve um erro ao se cadastrar.", "Tente novamente mais tarde.")
+      console.log("Erro no cadastro: ", error)
+    } finally {
+      setIsLoading(false)
+    }
+
+    
   };
 
   return (
@@ -138,6 +179,7 @@ export default function Logon() {
               icon="arrow-left"
               iconLib={Feather}
               iconSize={15}
+              width={50}
               height={50}
               borderW={1}
               borderC={colors.gray}
@@ -161,8 +203,9 @@ export default function Logon() {
               <Text style={[texts.legend, {color: colors.gray}]}>Selecione uma foto para o seu perfil.</Text>
             </View>
 
-            <TouchableOpacity activeOpacity={0.8} onPress={() => console.log('Foto de perfil')}>
+            <TouchableOpacity activeOpacity={0.8} onPress={pickImage}>
               <IconBox
+                image={iconImg}
                 width={80}
                 height={80}
               />

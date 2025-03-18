@@ -21,12 +21,17 @@ const iconBox: React.FC<iconBoxProps> = ({ image, width, height }) => {
         borderRadius: 50,
         elevation: 2,
         backgroundColor: colors.darkGray,
+        overflow: 'hidden'
       }}
     >
-      {image === undefined ? (
+      {!image ? (
         <Octicons name="feed-person" size={width - 25} color={"#474747"} />
       ) : (
-        <Image source={{ uri: image }} resizeMode="cover" />
+        <Image
+        source={{ uri: image }}
+        style={{width: '100%', height: '100%'}}
+        resizeMode="cover"
+        />
       )}
     </View>
   );
