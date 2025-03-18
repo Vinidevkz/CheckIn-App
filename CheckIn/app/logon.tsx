@@ -21,6 +21,7 @@ import Input from "@/src/components/input";
 import Header from "@/src/components/header";
 import Button from "@/src/components/button";
 import Loading from "@/src/components/loading";
+import IconBox from "@/src/components/iconBox";
 
 //urls
 import axios from "axios";
@@ -28,6 +29,7 @@ import UserURLs from "@/src/services/urls/userUrls";
 
 //storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ColorSpace } from "react-native-reanimated";
 
 export default function Logon() {
   const route = useRouter();
@@ -153,6 +155,19 @@ export default function Logon() {
       <Loading isLoading={isLoading} />
       <ScrollView>
         <View style={s.container}>
+          <View style={s.imageIconCont}>
+            <View>
+              <Text style={[texts.subtitle1, {color: colors.white}]}>Foto de Perfil:</Text>
+              <Text style={[texts.legend, {color: colors.gray}]}>Selecione uma foto para o seu perfil.</Text>
+            </View>
+
+            <TouchableOpacity activeOpacity={0.8} onPress={() => console.log('Foto de perfil')}>
+              <IconBox
+                width={80}
+                height={80}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={s.inputCont}>
             <Text style={[texts.subtitle2, { color: colors.white }]}>
               Nome:
@@ -215,5 +230,14 @@ const s = StyleSheet.create({
     gap: 10,
   },
 
-  inputCont: {},
+  imageIconCont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: 5,
+  },
+
+  inputCont: {
+    margin: 5
+  },
 });
