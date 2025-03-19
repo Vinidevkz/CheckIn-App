@@ -28,8 +28,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from '@/src/contexts/userContext';
 import { AuthProvider } from '@/src/contexts/userContext';
 
-
-
 export default function Index() {
   
   const openLinkGitHub = () => {

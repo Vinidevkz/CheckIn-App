@@ -107,9 +107,8 @@ export default function Logon() {
       Alert.alert("Campos obrigatórios.", "Preencha todos os campos.");
     }
 
-
+    setIsLoading(true)
     try {
-      setIsLoading(true)
       axios
         .post(url, {
           nameUser: nameUser,
@@ -123,7 +122,7 @@ export default function Logon() {
 
           AsyncStorage.setItem("user", JSON.stringify(newUser)),
           AsyncStorage.setItem("token", JSON.stringify(token)),
-          route.push("/(tabs)"),
+          route.replace("/(tabs)"),
           setIsLoading(false);
         })
         .catch((error) => {
@@ -140,7 +139,7 @@ export default function Logon() {
           } else if (error.request) {
             Alert.alert(
               "Erro de rede ou servidor inativo",
-              "Verifique sua conexão com a internet."
+              "Verifique sua conexão com a internet e tente mais tarde."
             ),
               console.log("Erro de rede ou servidor inativo:", error.request);
           } else {
@@ -158,7 +157,6 @@ export default function Logon() {
       setIsLoading(false)
     }
 
-    
   };
 
   return (
