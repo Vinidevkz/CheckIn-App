@@ -31,8 +31,6 @@ import UserURLs from "@/src/services/urls/userUrls";
 
 //storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { uploadImageToFirebase } from "@/src/services/firebase/uploadImage";
-
 
 export default function Logon() {
   const route = useRouter();
@@ -108,19 +106,12 @@ export default function Logon() {
     if (!nameUser || !emailUser || !passwordUser || !cpfUser || !ageUser) {
       Alert.alert("Campos obrigatórios.", "Preencha todos os campos.");
     }
-    setIsLoading(true)
+
 
     try {
-      const imageUrl = await uploadImageToFirebase(iconImg);
-
-      if (!imageUrl) {
-        console.log(imageUrl)
-        Alert.alert("Erro inesperado.", "Houve um erro com a imagem selecionada, tente novamente mais tarde.");
-        return;
-      }
+      setIsLoading(true)
       axios
         .post(url, {
-          iconUser: imageUrl,
           nameUser: nameUser,
           emailUser: emailUser,
           passwordUser: passwordUser,

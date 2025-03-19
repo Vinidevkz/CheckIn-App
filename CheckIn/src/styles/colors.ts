@@ -4,7 +4,8 @@ const colors = {
     bgContainer: '#121212',
     white: '#f4f4f4',
     gray: '#c4c4c4',
-    darkGray: '#2e2e2e'
+    darkGray: '#2e2e2e',
+    red: '#f5574c'
 }
 
 export default colors
