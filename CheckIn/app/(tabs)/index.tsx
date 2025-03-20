@@ -1,7 +1,7 @@
-import { useRef, useEffect } from 'react';
-import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import { useRef, useEffect, useState } from 'react';
+import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet, StatusBar, Animated, Dimensions } from 'react-native';
 
-import {Octicons, MaterialIcons, AntDesign, Feather} from '@expo/vector-icons'
+import {Entypo, MaterialIcons, AntDesign, Feather, FontAwesome6} from '@expo/vector-icons'
 import colors from '@/src/styles/colors';
 import texts from '@/src/styles/texts';
 
@@ -47,32 +47,78 @@ export default function Index() {
     },
   ]
 
+  const screenWidth = Dimensions.get("window").width;
+  const [isOpen, setIsOpen] = useState(false);
+  const slideAnim = useRef(new Animated.Value(-screenWidth)).current;
+
+  
+  const toggleDrawer = () => {
+    if (isOpen) {
+      Animated.timing(slideAnim, {
+        toValue: -screenWidth,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => setIsOpen(false));
+    } else {
+      setIsOpen(true);
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
-                <StatusBar
+          <StatusBar
             translucent={true}
             backgroundColor="transparent"
             barStyle="light-content"
           />
       <Header
         element1={(
-          <TouchableOpacity activeOpacity={0.7}>
-            <MaterialIcons name="menu" size={30} color={colors.white} />
+          <TouchableOpacity activeOpacity={0.7} onPress={toggleDrawer} >
+            <MaterialIcons name="menu" size={40} color={colors.white} />
           </TouchableOpacity>
         )}
-        element2={(
-            <Image
-              source={require('@/src/img/iconPNG.png')}
-              resizeMode='contain'
-              style={{width: 50, height: 50}}
-            />
-        )}
+
         element3={(
-          <View>
-            <Octicons name="person-fill" size={24} color={colors.white} />
-          </View>
+          <Image
+            source={require('@/src/img/logo.png')}
+            resizeMode='contain'
+            style={{width: 120}}
+          />
         )}
       />
+
+      {isOpen && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={toggleDrawer}
+          style={s.closeDrawerCont}
+        />
+      )}
+
+      <Animated.View
+        style={[s.drawer, {transform: [{ translateX: slideAnim }]}]}
+      >
+        <Text style={[texts.title, {color: colors.white}]}>Menu</Text>
+        <View style={{gap: 25, paddingVertical: 20}}>
+          <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+            <Entypo name="ticket" size={24} color={colors.white} />
+            <Text style={[texts.text, {color: colors.white}]}>Meus Ingressos</Text>
+          </TouchableOpacity >
+          <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+            <MaterialIcons name="payments" size={24} color={colors.white} />
+            <Text style={[texts.text, {color: colors.white}]}>Compras</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+            <FontAwesome6 name="gear" size={24} color={colors.white} />
+            <Text style={[texts.text, {color: colors.white}]}>Configurações</Text>
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
 
       <ScrollView >
         <View style={s.container}>
@@ -231,5 +277,27 @@ const s = StyleSheet.create({
     height: '50%',
     backgroundColor: colors.gray,
     overflow: 'hidden'
+  },
+
+  drawer: {
+    zIndex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: 250,
+    height: "100%",
+    backgroundColor: "#222",
+    paddingHorizontal: 20,
+    paddingTop: 50
+  },
+
+  closeDrawerCont: {
+    zIndex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
   }
 });
