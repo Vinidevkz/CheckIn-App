@@ -65,7 +65,7 @@ export default function Profile() {
           try {
             await AsyncStorage.removeItem("user");
             await AsyncStorage.removeItem("token");
-            router.replace("./");
+            router.replace("/logoutLoading");
           } catch (error) {
             console.log("Erro ao fazer logout: ", error);
           }

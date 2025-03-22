@@ -100,25 +100,37 @@ export default function Index() {
         />
       )}
 
-      <Animated.View
-        style={[s.drawer, {transform: [{ translateX: slideAnim }]}]}
-      >
-        <Text style={[texts.title, {color: colors.white}]}>Menu</Text>
-        <View style={{gap: 25, paddingVertical: 20}}>
-          <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-            <Entypo name="ticket" size={24} color={colors.white} />
-            <Text style={[texts.text, {color: colors.white}]}>Meus Ingressos</Text>
-          </TouchableOpacity >
-          <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-            <MaterialIcons name="payments" size={24} color={colors.white} />
-            <Text style={[texts.text, {color: colors.white}]}>Compras</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-            <FontAwesome6 name="gear" size={24} color={colors.white} />
-            <Text style={[texts.text, {color: colors.white}]}>Configurações</Text>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
+      
+
+        <Animated.View
+          style={[s.drawer, {transform: [{ translateX: slideAnim }]}]}
+        >
+          <Text style={[texts.title, {color: colors.white}]}>Menu</Text>
+          <View style={{gap: 25, paddingVertical: 20}}>
+            <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+              <Entypo name="ticket" size={24} color={colors.white} />
+              <Text style={[texts.legend, {color: colors.white}]}>Meus Ingressos</Text>
+            </TouchableOpacity >
+            <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+              <MaterialIcons name="payments" size={24} color={colors.white} />
+              <Text style={[texts.legend, {color: colors.white}]}>Compras</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleDrawer} style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+              <FontAwesome6 name="gear" size={24} color={colors.white} />
+              <Text style={[texts.legend, {color: colors.white}]}>Configurações</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Image
+            source={require("@/src/img/iconPNG.png")}
+            resizeMode='contain'
+            style={{ opacity: 0.1, width: '180%', right: 20 }}
+          />
+
+          <View style={{position: 'absolute', bottom: 20, left: 10, right: 10}}>
+            <Text style={[texts.legend, {color: colors.gray}]}>Leia atentamente os <Text style={{textDecorationLine: 'underline'}}>Termos de política e privacidade.</Text></Text>
+          </View>
+        </Animated.View>
 
       <ScrollView >
         <View style={s.container}>
@@ -288,7 +300,8 @@ const s = StyleSheet.create({
     height: "100%",
     backgroundColor: "#222",
     paddingHorizontal: 20,
-    paddingTop: 50
+    paddingTop: 50,
+    overflow: 'hidden'
   },
 
   closeDrawerCont: {

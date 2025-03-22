@@ -8,6 +8,7 @@ interface ButtonProps {
     title?: string,
     titleC?: string,
     icon?: string,
+    iconC?: any,
     iconSize?: number,
     iconLib?: any,
     width?: DimensionValue,
@@ -21,7 +22,7 @@ interface ButtonProps {
     onPress?: () => void
 }
 
-const Button: React.FC<ButtonProps> = ({title, titleC, width = '100%', height, padding = 15, icon, iconSize = 20, iconLib: IconLib, bgColor, borderW, borderR, borderC, onPress, isLoading, ...rest}) => {
+const Button: React.FC<ButtonProps> = ({title, titleC, width = '100%', height, padding = 15, icon, iconC, iconSize = 20, iconLib: IconLib, bgColor, borderW, borderR, borderC, onPress, isLoading, ...rest}) => {
     return(
         <TouchableOpacity
             activeOpacity={0.7}
@@ -37,7 +38,7 @@ const Button: React.FC<ButtonProps> = ({title, titleC, width = '100%', height, p
                 {title}
                 </Text>
             ) : IconLib && icon ? (
-                <IconLib name={icon} size={iconSize} color="#f4f4f4" />
+                <IconLib name={icon} size={iconSize} color={iconC ? iconC : "#f4f4f4"} />
             ) : null}
 
 

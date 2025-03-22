@@ -117,11 +117,11 @@ export default function Logon() {
           cpfUser: cpfUser,
           dataNasc: ageUser,
         })
-        .then((response) => {
+        .then(async (response) => {
           const { newUser, token } = response.data;
 
-          AsyncStorage.setItem("user", JSON.stringify(newUser)),
-          AsyncStorage.setItem("token", JSON.stringify(token)),
+          await AsyncStorage.setItem("user", JSON.stringify(newUser)),
+          await AsyncStorage.setItem("token", JSON.stringify(token)),
           route.replace("/(tabs)"),
           setIsLoading(false);
         })

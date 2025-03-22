@@ -13,16 +13,19 @@ interface InputProps {
     security?: boolean,
     mask?: string,
     placeholder?: string,
+    paddingH?: number,
+    paddingV?: number,
+    height?: number,
     onChange?: (text: string) => void
 }
 
-const Input: React.FC<InputProps> = ({maxLen, mask, placeholder, security = false, onChange, ...rest}) => {
+const Input: React.FC<InputProps> = ({maxLen, mask, height, paddingH, paddingV, placeholder, security = false, onChange, ...rest}) => {
 
     const [isVisible, setIsVisible] = useState(security)
     const [maskedValue, setMaskedValue] = useState('');
 
     return(
-        <View style={s.container}>
+        <View style={[s.container, {height: height, paddingHorizontal: paddingH, paddingVertical: paddingV}]}>
         {mask ? (
             <MaskedTextInput
                 mask={mask}
