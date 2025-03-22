@@ -76,6 +76,8 @@ export default function Login() {
             console.log("Erro inesperado:", error.message);
         }
         setIsLoading(true)
+      }).finally(() => {
+        setIsLoading(false)
       })
     }
 

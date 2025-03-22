@@ -94,6 +94,7 @@ export default function Profile() {
               borderColor: colors.darkGray,
               padding: 15,
               alignItems: "center",
+              backgroundColor: colors.background
             }}
           >
             <View

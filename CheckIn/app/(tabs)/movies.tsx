@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import {View, Text, SafeAreaView, FlatList, StyleSheet} from 'react-native'
+import {View, Text, SafeAreaView, FlatList, StyleSheet, Alert, Image} from 'react-native'
 
 //styles
 import texts from '@/src/styles/texts'
@@ -19,14 +19,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function Movies(){
 
     const [token, setToken] = useState<string>("")
+    const [latestMovies, setLatestMovies] = useState()
+
+    const [isLoading, setIsLoading] = useState()
 
     useEffect(() => {
         const getToken = async () => {
             const tokenStr = await AsyncStorage.getItem("token")
 
             if (tokenStr) {
-                setToken(tokenStr)
-                console.log("Token do usuário:", tokenStr)
+                const tokenParsed = JSON.parse(tokenStr)
+                setToken(tokenParsed)
+                //console.log("Token do usuário:", tokenParsed)
             } else {
                 console.log("Nenhum token encontrado.")
             }
@@ -35,15 +39,33 @@ export default function Movies(){
 
         const getLatestMovies = async () => {
             const url = MovieURLs.latest
+            //console.log("URL da requisção: ", url)
 
             try {
-                const response = axios.get(url,)
+                const response = await axios.post(url, null, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }).then(async (response) => {
+                    const  { movies } = response.data
+
+                    setLatestMovies(movies)
+                })
+                .catch((error) => {
+                    console.log("Houve um erro ao buscar os ultimos lançamentos.", error.response.data)
+                    console.log("Mensagem:", error.response.data.message);
+                    console.log("Detalhes:", error.response.data.details);
+                })
+
+                
+
+
             } catch (error) {
                 
             }
         }
-        console.log("Token do usuario: ", token)
-        getToken
+        getToken()
+        getLatestMovies()
     }, [])
 
     return(
@@ -77,7 +99,30 @@ export default function Movies(){
             </View>
 
             <FlatList
+                showsHorizontalScrollIndicator={false}
+                horizontal={true}
+                data={latestMovies}
+                keyExtractor={(item) => item.idMovie.toString()}
+                renderItem={({item}) => (
+                    <View style={s.movieCont}>
+                        <View style={s.posterCont}>
+                            <Image
+                                source={{uri: item.moviePoster}}
+                                resizeMode='cover'
+                                style={{width: '100%', height: '100%'}}
+                            />
+                        </View>
 
+                        <View style={s.movieInfos}>
+                         <Text style={[texts.subtitle1, {color: colors.white}]}>{item.titleMovie}</Text>
+                         <Text style={[texts.legend, {color: colors.white, fontSize: 12}]}>{item.descMovie}</Text>
+                         <View>
+                            <Text style={[texts.legend, {color: colors.white, fontSize: 12}]}></Text>
+                         </View>
+                        </View>
+
+                    </View>
+                )}
             />
         </SafeAreaView>
     )
@@ -88,6 +133,19 @@ const s = StyleSheet.create({
         margin: 15
     },
     movieCont: {
+        height: 400,
+        width: 200,
+        borderRadius: 15,
+        elevation: 20,
+        backgroundColor: colors.darkGray,
+        alignItems: 'center',
+        overflow: 'hidden'
+    },
+    posterCont: {
+        width: '100%',
+        height: 300
+    },
+    movieInfos: {
 
     }
 })
