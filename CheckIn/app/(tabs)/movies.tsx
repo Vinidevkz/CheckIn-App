@@ -1,151 +1,311 @@
-import { useState, useEffect } from 'react'
-import {View, Text, SafeAreaView, FlatList, StyleSheet, Alert, Image} from 'react-native'
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  FlatList,
+  StyleSheet,
+  Alert,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 
 //styles
-import texts from '@/src/styles/texts'
-import colors from '@/src/styles/colors'
+import texts from "@/src/styles/texts";
+import colors from "@/src/styles/colors";
+import { AntDesign } from "@expo/vector-icons";
 
 //components
-import Header from '@/src/components/header'
-import Input from '@/src/components/input'
-import Button from '@/src/components/button'
-import { FontAwesome } from '@expo/vector-icons'
+import Header from "@/src/components/header";
+import Input from "@/src/components/input";
+import Button from "@/src/components/button";
+import MovieSkeleton from "@/src/components/skeletons/movieSkeleton";
+
+import { FontAwesome } from "@expo/vector-icons";
 
 //services
-import MovieURLs from '@/src/services/urls/movieUrls'
-import axios from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import MovieURLs from "@/src/services/urls/movieUrls";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Movies(){
+export default function Movies() {
+  const [token, setToken] = useState<string>("");
+  const [latestMovies, setLatestMovies] = useState();
 
-    const [token, setToken] = useState<string>("")
-    const [latestMovies, setLatestMovies] = useState()
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const [isLoading, setIsLoading] = useState()
+  useEffect(() => {
+    const getToken = async () => {
+      const tokenStr = await AsyncStorage.getItem("token");
 
-    useEffect(() => {
-        const getToken = async () => {
-            const tokenStr = await AsyncStorage.getItem("token")
+      if (tokenStr) {
+        const tokenParsed = JSON.parse(tokenStr);
+        setToken(tokenParsed);
+        console.log("Token do usuário:", tokenParsed);
+      } else {
+        console.log("Nenhum token encontrado.");
+      }
+    };
+    getToken();
+  }, []);
 
-            if (tokenStr) {
-                const tokenParsed = JSON.parse(tokenStr)
-                setToken(tokenParsed)
-                //console.log("Token do usuário:", tokenParsed)
-            } else {
-                console.log("Nenhum token encontrado.")
-            }
+  useEffect(() => {
+    const getLatestMovies = async () => {
+      if (!token) return; // Evita fazer requisição com token indefinido
 
+      const url = MovieURLs.latest;
+      try {
+        const response = await axios.post(url, null, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const { movies } = response.data;
+        setLatestMovies(movies);
+
+      } catch (error) {
+        console.log(
+          "Houve um erro ao buscar os últimos lançamentos."
+        );
+      }
+    };
+
+    getLatestMovies();
+  }, [token]);
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <Header
+        element1={
+          <View style={{ width: "80%" }}>
+            <Input
+              placeholder="Pesquise por filmes"
+              height={50}
+              paddingH={10}
+              paddingV={0}
+            />
+          </View>
         }
-
-        const getLatestMovies = async () => {
-            const url = MovieURLs.latest
-            //console.log("URL da requisção: ", url)
-
-            try {
-                const response = await axios.post(url, null, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }).then(async (response) => {
-                    const  { movies } = response.data
-
-                    setLatestMovies(movies)
-                })
-                .catch((error) => {
-                    console.log("Houve um erro ao buscar os ultimos lançamentos.", error.response.data)
-                    console.log("Mensagem:", error.response.data.message);
-                    console.log("Detalhes:", error.response.data.details);
-                })
-
-                
-
-
-            } catch (error) {
-                
-            }
+        element3={
+          <Button
+            icon="search"
+            iconLib={FontAwesome}
+            iconC={colors.background}
+            width={50}
+            height={50}
+            borderR={15}
+            bgColor={colors.white}
+          />
         }
-        getToken()
-        getLatestMovies()
-    }, [])
+      />
 
-    return(
-        <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
-            <Header
-                element1={(
-                    <View style={{width: '80%'}}>
-                        <Input
-                            placeholder='Pesquise por filmes'
-                            height={50}
-                            paddingH={10}
-                            paddingV={0}
-                        />
+      <ScrollView>
+        <View style={s.titleCont}>
+          <Text style={[texts.subtitle1, { color: colors.white }]}>
+            Lançamentos:
+          </Text>
+        </View>
+
+        {isLoading ? (
+          <FlatList
+            data={Array(6).fill(0)} // Gera 6 placeholders
+            renderItem={() => <MovieSkeleton />}
+            keyExtractor={(_, index) => `skeleton-${index}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        ) : (
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}
+            data={latestMovies}
+            keyExtractor={(item) => item.idMovie.toString()}
+            renderItem={({ item }) => (
+              <View style={s.movieCont}>
+                <View style={s.posterCont}>
+                  <Image
+                    source={{ uri: item.moviePoster }}
+                    resizeMode="cover"
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </View>
+
+                <View style={s.movieInfos}>
+                  <View style={{ gap: 5 }}>
+                    <Text
+                      style={[texts.subtitle1, { color: colors.white }]}
+                      numberOfLines={2}
+                    >
+                      {item.titleMovie}
+                    </Text>
+                    <Text
+                      style={[
+                        texts.legend,
+                        { color: colors.white, fontSize: 12 },
+                      ]}
+                      numberOfLines={3}
+                    >
+                      {item.descMovie}
+                    </Text>
+                  </View>
+
+                  <View style={{ gap: 10 }}>
+                    <View
+                      style={{
+                        alignSelf: "flex-start",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 5,
+                        height: 30,
+                      }}
+                    >
+                      <Image
+                        source={require("@/src/img/tomatoIcon.png")}
+                        resizeMode="cover"
+                        style={{ width: 20, height: 20 }}
+                      />
+                      <Text
+                        style={[
+                          texts.text,
+                          { color: colors.white, paddingTop: 5 },
+                        ]}
+                      >
+                        78
+                      </Text>
                     </View>
-                )}
-                element3={(
+
                     <Button
-                        icon='search'
-                        iconLib={FontAwesome}
-                        iconC={colors.background}
-                        width={50}
-                        height={50}
-                        borderR={15}
-                        bgColor={colors.white}
+                      title="Ver Sessões"
+                      bgColor={colors.white}
+                      borderR={50}
+                      height={40}
+                      padding={10}
                     />
-                )}
-            />
+                  </View>
+                </View>
+              </View>
+            )}
+          />
+        )}
 
-            <View style={s.titleCont}>
-                <Text style={[texts.subtitle1, {color: colors.white}]}>Lançamentos:</Text>
-            </View>
+        <View style={s.titleCont}>
+          <Text style={[texts.subtitle1, { color: colors.white }]}>
+            Lançamentos:
+          </Text>
+        </View>
 
-            <FlatList
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                data={latestMovies}
-                keyExtractor={(item) => item.idMovie.toString()}
-                renderItem={({item}) => (
-                    <View style={s.movieCont}>
-                        <View style={s.posterCont}>
-                            <Image
-                                source={{uri: item.moviePoster}}
-                                resizeMode='cover'
-                                style={{width: '100%', height: '100%'}}
-                            />
-                        </View>
+        <FlatList
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          data={latestMovies}
+          keyExtractor={(item) => item.idMovie.toString()}
+          renderItem={({ item }) =>
+            isLoading ? (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: 500,
+                }}
+              >
+                <ActivityIndicator size={"large"} color={colors.white} />
+              </View>
+            ) : (
+              <View style={s.movieCont}>
+                <View style={s.posterCont}>
+                  <Image
+                    source={{ uri: item.moviePoster }}
+                    resizeMode="cover"
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </View>
 
-                        <View style={s.movieInfos}>
-                         <Text style={[texts.subtitle1, {color: colors.white}]}>{item.titleMovie}</Text>
-                         <Text style={[texts.legend, {color: colors.white, fontSize: 12}]}>{item.descMovie}</Text>
-                         <View>
-                            <Text style={[texts.legend, {color: colors.white, fontSize: 12}]}></Text>
-                         </View>
-                        </View>
+                <View style={s.movieInfos}>
+                  <View style={{ gap: 5 }}>
+                    <Text
+                      style={[texts.subtitle1, { color: colors.white }]}
+                      numberOfLines={2}
+                    >
+                      {item.titleMovie}
+                    </Text>
+                    <Text
+                      style={[
+                        texts.legend,
+                        { color: colors.white, fontSize: 12 },
+                      ]}
+                      numberOfLines={3}
+                    >
+                      {item.descMovie}
+                    </Text>
+                  </View>
 
+                  <View style={{ gap: 10 }}>
+                    <View
+                      style={{
+                        alignSelf: "flex-start",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 5,
+                        height: 30,
+                      }}
+                    >
+                      <Image
+                        source={require("@/src/img/tomatoIcon.png")}
+                        resizeMode="cover"
+                        style={{ width: 20, height: 20 }}
+                      />
+                      <Text
+                        style={[
+                          texts.text,
+                          { color: colors.white, paddingTop: 5 },
+                        ]}
+                      >
+                        78
+                      </Text>
                     </View>
-                )}
-            />
-        </SafeAreaView>
-    )
+
+                    <Button
+                      title="Ver Sessões"
+                      bgColor={colors.white}
+                      borderR={50}
+                      height={40}
+                      padding={10}
+                    />
+                  </View>
+                </View>
+              </View>
+            )
+          }
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const s = StyleSheet.create({
-    titleCont: {
-        margin: 15
-    },
-    movieCont: {
-        height: 400,
-        width: 200,
-        borderRadius: 15,
-        elevation: 20,
-        backgroundColor: colors.darkGray,
-        alignItems: 'center',
-        overflow: 'hidden'
-    },
-    posterCont: {
-        width: '100%',
-        height: 300
-    },
-    movieInfos: {
+  titleCont: {
+    margin: 15,
+  },
+  movieCont: {
+    height: 550,
+    width: 200,
+    borderRadius: 15,
+    elevation: 20,
+    backgroundColor: colors.darkGray,
+    alignItems: "center",
+    overflow: "hidden",
+    marginHorizontal: 10,
+  },
+  posterCont: {
+    width: "100%",
+    height: "65%",
+  },
+  movieInfos: {
+    flex: 1,
+    width: "100%",
+    padding: 10,
+    justifyContent: "space-between",
+  },
 
-    }
-})
+  rowMovieCont: {},
+});
