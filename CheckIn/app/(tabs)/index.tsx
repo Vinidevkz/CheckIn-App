@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from 'react';
-import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet, StatusBar, Animated, Dimensions } from 'react-native';
+import {View, Text, Image, TouchableOpacity, FlatList, SafeAreaView, ScrollView, StyleSheet, StatusBar, Animated, Dimensions, ImageBackground } from 'react-native';
 
+//styles
+import { LinearGradient } from 'expo-linear-gradient';
 import {Entypo, MaterialIcons, AntDesign, Feather, FontAwesome6} from '@expo/vector-icons'
 import colors from '@/src/styles/colors';
 import texts from '@/src/styles/texts';
@@ -160,10 +162,6 @@ export default function Index() {
 
       <ScrollView >
 
-        <View style={s.titleCont}>
-          <Text style={[texts.title, {color: colors.white}]}>Notícias:</Text>
-        </View>
-
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -175,8 +173,9 @@ export default function Index() {
           keyExtractor={(item)=> item.idNews.toString()} 
           renderItem={({item}) => (
             <View style={[s.newsContainer]}>
+
               <View style={s.newsPosterCont}>
-                <Image
+                <ImageBackground
                   source={{uri: item.newsImage}}
                   style={{width: '100%', height: '100%'}}
                   resizeMode='cover'
@@ -184,18 +183,29 @@ export default function Index() {
               </View>
 
               <View style={s.newsInfo}>
+              <LinearGradient
+  colors={['rgba(0,0,0,1)', 'transparent']} // Aumentei a opacidade do preto para 1
+  start={{ x: 0.5, y: 1 }} 
+  end={{ x: 0.5, y: 0 }}
+  locations={[0, 1]} // Preto ocupa 70%, transparente 30%
+  style={s.background}
+/>
+
+
                 <Text style={[texts.title, {color: colors.white}]}>{item.titleNews}</Text>
 
                 <Text style={[texts.text, {color: colors.white}]}>{item.newsDesc}</Text>
 
-                <Button
-                  title={item.newsButtonTitle ? item.newsButtonTitle : ""}
-                  icon={item.newsButtonIcon}
-                  bgColor={colors.white}
-                  borderR={50}
-                  iconLib={FontAwesome6}
-                  iconC={colors.background}
-                />
+                <View style={{margin: 5}}>
+                  <Button
+                    title={item.newsButtonTitle ? item.newsButtonTitle : ""}
+                    icon={item.newsButtonIcon}
+                    bgColor={colors.white}
+                    borderR={50}
+                    iconLib={FontAwesome6}
+                    iconC={colors.background}
+                  />
+                </View>
               </View>
             </View>
           )}
@@ -243,15 +253,17 @@ export default function Index() {
                 </View>
               </View>
               
-              <Button
-              bgColor={colors.white}
-              borderR={50}
-              height={30}
-              padding={5}
-              title='Ver +'
-              icon='plus'
-              iconLib={FontAwesome6}
-              />
+
+                <Button
+                bgColor={colors.white}
+                borderR={50}
+                height={30}
+                padding={5}
+                title='Ver +'
+                icon='plus'
+                iconLib={FontAwesome6}
+                />
+
             </View>
           )}
         />
@@ -274,26 +286,29 @@ const s = StyleSheet.create({
   },
 
   newsContainer: {
-    width: 400,
-    height: 380,
-    borderRadius: 15,
+    width: Dimensions.get('window').width,
+    height: 300,
     backgroundColor: colors.darkGray,
     overflow: 'hidden',
-    marginHorizontal: 5
+    marginHorizontal: 5,
+    alignItems: 'baseline'
   },
 
   newsPosterCont: {
     width: '100%',
-    height: '50%',
-    backgroundColor: colors.gray,
+    height: '100%',
     overflow: 'hidden'
   },
 
   newsInfo: {
     gap: 5,
-    justifyContent: 'space-around',
-    padding: 10,
-    flex: 1
+    justifyContent: 'flex-end',
+    paddingHorizontal: 15,
+    flex: 1,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    bottom: 0,
   },
 
   cinemaContainer: {
@@ -358,5 +373,13 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
     gap: 15
-  }
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    height: '100%'
+  },
 });
