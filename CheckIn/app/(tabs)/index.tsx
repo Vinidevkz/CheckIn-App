@@ -8,45 +8,71 @@ import texts from '@/src/styles/texts';
 //components
 import Header from '@/src/components/header';
 import Button from '@/src/components/button';
+import IconBox from '@/src/components/iconBox';
 
 export default function Index() {
 
-  const Movies = [
+  //news dots
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = (event: any) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.round(scrollPosition / screenWidth); // screenWidth é a largura da tela
+    setActiveIndex(index);
+  };
+
+  const News = [
     {
-      "idMovie": 1,
-      "titleMovie": "The Batman",
-      "moviePoster": "https://cdn.awsli.com.br/2500x2500/1610/1610163/produto/177680691/poster-the-batman-j-4033ffcb.jpg",
-      "movieDesc": "Após dois anos espreitando as ruas como Batman, Bruce Wayne se encontra nas profundezas mais sombrias de Gotham City.",
-      "dateLanc": "01/01/2026"
+      "idNews": 1,
+      "titleNews": "Primeiro Trailer de Novocaine é liberado!",
+      "newsImage": "https://static01.nyt.com/images/2025/03/10/multimedia/novocaine1-gbzl/novocaine1-gbzl-videoSixteenByNine3000.jpg",
+      "newsDesc": "Assista agora!",
+      "newsButtonIcon": "play",
+      "newsButtonTitle": null,
     },
     {
-      "idMovie": 2,
-      "titleMovie": "Capitão América: Admirável Mundo Novo",
-      "moviePoster": "https://br.web.img2.acsta.net/img/56/0c/560c72bf877f88472877898cebe00ff0.jpg",
-      "movieDesc": "Sam se vê no meio de um incidente internacional após se encontrar com o Presidente Thaddeus Ross.",
-      "dateLanc": "01/01/2026"
-    } 
+      "idNews": 2,
+      "titleNews": "Primeiro Trailer de Novocaine é liberado!",
+      "newsImage": "https://static01.nyt.com/images/2025/03/10/multimedia/novocaine1-gbzl/novocaine1-gbzl-videoSixteenByNine3000.jpg",
+      "newsDesc": "Assista agora!",
+      "newsButtonIcon": "play",
+      "newsButtonTitle": null,
+    },
+    {
+      "idNews": 3,
+      "titleNews": "Primeiro Trailer de Novocaine é liberado!",
+      "newsImage": "https://static01.nyt.com/images/2025/03/10/multimedia/novocaine1-gbzl/novocaine1-gbzl-videoSixteenByNine3000.jpg",
+      "newsDesc": "Assista agora!",
+      "newsButtonIcon": "play",
+      "newsButtonTitle": null,
+    },
   ]
 
-  const Cinemas = [
+  const CinemasPromos = [
     {
-      "idCinema": 1,
-      "picCinema": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/94/55/42/cinemark.jpg?w=1200&h=-1&s=1",
+      "idPromo": 1,
       "nameCinema": "Cinemark",
-      "descCinema": "Líder mundial em venda de ingressos, a Rede Cinemark representa cerca de 30% do mercado brasileiro de cinema e tem a missão de proporcionar uma experiência cinematográfica inesquecível para cada um de seus clientes.",
-      "localCinema": "Cinemark Internacional Shopping - Guarulhos",
-      "avalCinema": "87%"
+      "cinemaPic": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfCCwaQj1QalRQtxv4x35v7RjHn5hQ5t47Lu8e07uEbS1afanHdZ8_4tinrxTltzIbv6A&usqp=CAU",
+      "promoDesc": "1 Combo Família + 1 Balde de Pipoca Tamanho Família por: ",
+      "promoValue": 24.90
     },
     {
-      "idCinema": 2,
-      "picCinema": "https://lh3.googleusercontent.com/p/AF1QipOvH80WIjXHXrCqwjbPJ1-Lc2IceEW2F1RWeXGR=s680-w680-h510",
-      "nameCinema": "Cine Itaim",
-      "descCinema": "Cinema moderno com os últimos lançamentos nacionais e internacionais, tanto em 2D quanto 3D.",
-      "localCinema": "Cine Itaim - Itaim",
-      "avalCinema": "97%"
+      "idPromo": 2,
+      "nameCinema": "Moviecom",
+      "cinemaPic": "https://play-lh.googleusercontent.com/-VjKmen7V2c79dbPZqLjaVrAx8ethkWzBMfS7It4ZfbaNMg8ygoZrp3bNU9DsSJMo7e5",
+      "promoDesc": "2 Combo Família + 1 Refrigerante Tamanho Família por: ",
+      "promoValue": 22.90
+    },
+    {
+      "idPromo": 3,
+      "nameCinema": "Cinépolis",
+      "cinemaPic": "https://gsobmidia.com.br/uploads/lojas/1345/logo-cinepolis-nuevo-png_1710440866.png",
+      "promoDesc": "2 Combo Família + 1 Refrigerante Tamanho Família por: ",
+      "promoValue": 22.90
     },
   ]
 
+  //drawer animation
   const screenWidth = Dimensions.get("window").width;
   const [isOpen, setIsOpen] = useState(false);
   const slideAnim = useRef(new Animated.Value(-screenWidth)).current;
@@ -133,108 +159,102 @@ export default function Index() {
         </Animated.View>
 
       <ScrollView >
-        <View style={s.container}>
-          <View style={s.titleCont}>
-            <Text style={[texts.title, {color: colors.white}]}>Filmes do momento:</Text>
-          </View>
 
-          <FlatList
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{paddingLeft: 10, alignSelf: 'flex-start'}}
-            data={Movies}
-            renderItem={({item}) => (
-              <View style={s.movieContainer}>
-                <View style={s.moviePosterCont}>
-                  <Image
-                    source={{uri: item.moviePoster}}
-                    resizeMode='cover'
-                    style={{width: '100%', height: '100%'}}
-                  />
-                </View>
-
-                <View style={{justifyContent: 'space-between', margin: 10, flex: 1}}>
-                  <View style={s.movieInfo}>
-                    <Text style={[texts.subtitle2, {color: colors.white}]} numberOfLines={1}>{item.titleMovie}</Text>
-                    <Text style={[texts.legend, {color: colors.white}]} numberOfLines={4}>{item.movieDesc}</Text>
-                  </View>
-
-                  <View style={{gap: 5, marginVertical: 10}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <Text style={[texts.legend, {color: colors.white}]}>{item.dateLanc}</Text>
-                      <Text style={[texts.legend, {color: colors.white}]}><AntDesign name="star" size={24} color="#ffd86b" /> 45</Text>
-                    </View>
-                    <View style={{width: '100%', alignItems: 'center'}}>
-                      <Button
-                          bgColor={colors.white}
-                          title='Ver Mais'
-                          borderR={20}
-                          width={'80%'}
-                          height={30}
-                          padding={5}
-                      />
-                    </View> 
-                  </View>
-                </View>
-
-              </View>
-            )}
-            keyExtractor={item => item.idMovie.toString()}
-          />
+        <View style={s.titleCont}>
+          <Text style={[texts.title, {color: colors.white}]}>Notícias:</Text>
         </View>
 
-        <View style={s.container}>
-          <View style={s.titleCont}>
-            <Text style={[texts.title, {color: colors.white}]}>Cinemas:</Text>
-          </View>
-
-          <FlatList
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            style={{paddingLeft: 10, alignSelf: 'flex-start'}}
-            data={Cinemas}
-            renderItem={({item}) => (
-              <View style={s.cinemaContainer}>
-                <View style={s.cinemaPicCont}>
-                  <Image
-                    source={{uri: item.picCinema}}
-                    resizeMode='cover'
-                    style={{width: '100%', height: '100%'}}
-                  />
-                </View>
-
-                <View style={{justifyContent: 'space-between', margin: 10, flex: 1}}>
-                  <View style={s.movieInfo}>
-                    <Text style={[texts.subtitle2, {color: colors.white}]} numberOfLines={1}>{item.nameCinema}</Text>
-                    <Text style={[texts.legend, {color: colors.white}]} numberOfLines={3}>{item.descCinema}</Text>
-                  </View>
-
-                  <View style={{gap: 5, marginVertical: 10}}>
-                    <View style={{  justifyContent: 'space-between'}}>
-                      <Text style={[texts.legend, {alignItems: 'center', color: colors.white}]}><Feather name="map-pin" size={20} color={colors.white} /> {item.localCinema}</Text>
-                      <Text style={[texts.legend, {color: colors.white}]}><AntDesign name="star" size={24} color="#ffd86b" /> {item.avalCinema}</Text>
-                    </View>
-                    <View style={{width: '100%', alignItems: 'center'}}>
-                      <Button
-                          bgColor={colors.white}
-                          title='Ver Mais'
-                          borderR={20}
-                          width={'80%'}
-                          height={30}
-                          padding={5}
-                      />
-                    </View> 
-                  </View>
-                </View>
-
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          snapToAlignment="center"
+          data={News}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          keyExtractor={(item)=> item.idNews.toString()} 
+          renderItem={({item}) => (
+            <View style={[s.newsContainer]}>
+              <View style={s.newsPosterCont}>
+                <Image
+                  source={{uri: item.newsImage}}
+                  style={{width: '100%', height: '100%'}}
+                  resizeMode='cover'
+                />
               </View>
-            )}
-            keyExtractor={item => item.idCinema.toString()}
-          />
+
+              <View style={s.newsInfo}>
+                <Text style={[texts.title, {color: colors.white}]}>{item.titleNews}</Text>
+
+                <Text style={[texts.text, {color: colors.white}]}>{item.newsDesc}</Text>
+
+                <Button
+                  title={item.newsButtonTitle ? item.newsButtonTitle : ""}
+                  icon={item.newsButtonIcon}
+                  bgColor={colors.white}
+                  borderR={50}
+                  iconLib={FontAwesome6}
+                  iconC={colors.background}
+                />
+              </View>
+            </View>
+          )}
+        />
+
+        <View style={s.dotsContainer}>
+          {News.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                s.dot,
+                { backgroundColor: activeIndex === index ? colors.white : colors.darkGray },
+              ]}
+            />
+          ))}
         </View>
 
+        <View style={s.titleCont}>
+          <Text style={[texts.title, {color: colors.white}]}>Promoções:</Text>
+        </View>
 
+        <FlatList
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          snapToAlignment="center"
+          data={CinemasPromos}
+          keyExtractor={(item)=> item.idPromo.toString()} 
+          renderItem={({item}) => (
+            <View style={[s.promoCont]}>
+              <View style={{width: 80, height: 70}}>
+                <IconBox
+                  image={item.cinemaPic}
+                  width={'100%'}
+                  height={'100%'}
+                />
+              </View>
 
+              <Text style={[texts.ultraB, {color: colors.white}]}>{item.nameCinema}</Text>
+
+              <View style={{gap: 10}}>
+                <Text style={[texts.text, {color: colors.white, textAlign: 'center'}]} numberOfLines={4}>{item.promoDesc}</Text>
+                <View style={{borderWidth: 2, borderColor: colors.yellow, alignItems: 'center', justifyContent: 'center', borderRadius: 20}}>
+                  <Text style={[texts.ultraB, {color: colors.white}]}>R${item.promoValue}</Text>
+                </View>
+              </View>
+              
+              <Button
+              bgColor={colors.white}
+              borderR={50}
+              height={30}
+              padding={5}
+              title='Ver +'
+              icon='plus'
+              iconLib={FontAwesome6}
+              />
+            </View>
+          )}
+        />
 
       </ScrollView>
     </SafeAreaView>
@@ -253,25 +273,27 @@ const s = StyleSheet.create({
     paddingVertical: 15
   },
 
-  movieContainer: {
-    flexDirection: 'row',
-    width: 380,
-    height: 230,
+  newsContainer: {
+    width: 400,
+    height: 380,
     borderRadius: 15,
     backgroundColor: colors.darkGray,
     overflow: 'hidden',
-    marginRight: 15,
+    marginHorizontal: 5
   },
 
-  moviePosterCont: {
-    width: '45%',
-    height: '100%',
+  newsPosterCont: {
+    width: '100%',
+    height: '50%',
     backgroundColor: colors.gray,
     overflow: 'hidden'
   },
 
-  movieInfo: {
+  newsInfo: {
     gap: 5,
+    justifyContent: 'space-around',
+    padding: 10,
+    flex: 1
   },
 
   cinemaContainer: {
@@ -312,5 +334,29 @@ const s = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
+  },
+
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 20,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+
+  promoCont: {
+    width: 180,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    borderWidth: 1,
+    borderColor: colors.darkGray,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    gap: 15
   }
 });

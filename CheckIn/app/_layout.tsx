@@ -15,6 +15,7 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
   Poppins_900Black,
+  Poppins_800ExtraBold_Italic,
 } from '@expo-google-fonts/poppins';
 
 export default function RootLayoutNav() {
@@ -26,6 +27,7 @@ export default function RootLayoutNav() {
     Poppins_500Medium,
     Poppins_700Bold,
     Poppins_900Black,
+    Poppins_800ExtraBold_Italic,
   });
 
 

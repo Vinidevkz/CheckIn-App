@@ -1,4 +1,4 @@
-import { View, Image } from "react-native";
+import { View, Image, DimensionValue } from "react-native";
 
 import colors from "@/src/styles/colors";
 
@@ -6,8 +6,8 @@ import { Octicons } from "@expo/vector-icons";
 
 interface iconBoxProps {
   image?: string;
-  width: number;
-  height: number;
+  width: DimensionValue;
+  height: DimensionValue;
 }
 
 const iconBox: React.FC<iconBoxProps> = ({ image, width, height }) => {

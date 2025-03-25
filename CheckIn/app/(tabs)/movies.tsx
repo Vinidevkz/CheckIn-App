@@ -52,9 +52,9 @@ export default function Movies() {
 
   useEffect(() => {
     const getLatestMovies = async () => {
-      if (!token) return; // Evita fazer requisição com token indefinido
+      if (!token) return;
 
-      const url = MovieURLs.latest;
+      const url = MovieURLs.latest
       try {
         const response = await axios.post(url, null, {
           headers: { Authorization: `Bearer ${token}` },
@@ -62,11 +62,9 @@ export default function Movies() {
 
         const { movies } = response.data;
         setLatestMovies(movies);
-
+        setIsLoading(false)
       } catch (error) {
-        console.log(
-          "Houve um erro ao buscar os últimos lançamentos."
-        );
+        console.log("Houve um erro ao buscar os últimos lançamentos.", error);
       }
     };
 
@@ -108,8 +106,8 @@ export default function Movies() {
 
         {isLoading ? (
           <FlatList
-            data={Array(6).fill(0)} // Gera 6 placeholders
-            renderItem={() => <MovieSkeleton />}
+            data={Array(6).fill(0)} 
+            renderItem={({ index }) => <MovieSkeleton key={index} />}
             keyExtractor={(_, index) => `skeleton-${index}`}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -132,15 +130,23 @@ export default function Movies() {
 
                 <View style={s.movieInfos}>
                   <View style={{ gap: 5 }}>
-                    <Text
-                      style={[texts.subtitle1, { color: colors.white }]}
-                      numberOfLines={2}
-                    >
-                      {item.titleMovie}
-                    </Text>
+                    <View>
+                      <Text
+                        style={[texts.ultraB, { color: colors.white }]}
+                        numberOfLines={2}
+                      >
+                        {item.titleMovie}
+                      </Text>
+                      <Text
+                        style={[texts.legend, { color: colors.gray, fontSize: 13 }]}
+                        numberOfLines={2}
+                      >
+                        {item.creators}
+                      </Text>
+                    </View>
                     <Text
                       style={[
-                        texts.legend,
+                        texts.text,
                         { color: colors.white, fontSize: 12 },
                       ]}
                       numberOfLines={3}
@@ -166,7 +172,7 @@ export default function Movies() {
                       />
                       <Text
                         style={[
-                          texts.text,
+                          texts.ultraB,
                           { color: colors.white, paddingTop: 5 },
                         ]}
                       >
@@ -178,8 +184,8 @@ export default function Movies() {
                       title="Ver Sessões"
                       bgColor={colors.white}
                       borderR={50}
-                      height={40}
-                      padding={10}
+                      height={30}
+                      padding={5}
                     />
                   </View>
                 </View>
@@ -187,96 +193,6 @@ export default function Movies() {
             )}
           />
         )}
-
-        <View style={s.titleCont}>
-          <Text style={[texts.subtitle1, { color: colors.white }]}>
-            Lançamentos:
-          </Text>
-        </View>
-
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-          data={latestMovies}
-          keyExtractor={(item) => item.idMovie.toString()}
-          renderItem={({ item }) =>
-            isLoading ? (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: 500,
-                }}
-              >
-                <ActivityIndicator size={"large"} color={colors.white} />
-              </View>
-            ) : (
-              <View style={s.movieCont}>
-                <View style={s.posterCont}>
-                  <Image
-                    source={{ uri: item.moviePoster }}
-                    resizeMode="cover"
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </View>
-
-                <View style={s.movieInfos}>
-                  <View style={{ gap: 5 }}>
-                    <Text
-                      style={[texts.subtitle1, { color: colors.white }]}
-                      numberOfLines={2}
-                    >
-                      {item.titleMovie}
-                    </Text>
-                    <Text
-                      style={[
-                        texts.legend,
-                        { color: colors.white, fontSize: 12 },
-                      ]}
-                      numberOfLines={3}
-                    >
-                      {item.descMovie}
-                    </Text>
-                  </View>
-
-                  <View style={{ gap: 10 }}>
-                    <View
-                      style={{
-                        alignSelf: "flex-start",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 5,
-                        height: 30,
-                      }}
-                    >
-                      <Image
-                        source={require("@/src/img/tomatoIcon.png")}
-                        resizeMode="cover"
-                        style={{ width: 20, height: 20 }}
-                      />
-                      <Text
-                        style={[
-                          texts.text,
-                          { color: colors.white, paddingTop: 5 },
-                        ]}
-                      >
-                        78
-                      </Text>
-                    </View>
-
-                    <Button
-                      title="Ver Sessões"
-                      bgColor={colors.white}
-                      borderR={50}
-                      height={40}
-                      padding={10}
-                    />
-                  </View>
-                </View>
-              </View>
-            )
-          }
-        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -287,7 +203,7 @@ const s = StyleSheet.create({
     margin: 15,
   },
   movieCont: {
-    height: 550,
+    height: 500,
     width: 200,
     borderRadius: 15,
     elevation: 20,
@@ -298,7 +214,7 @@ const s = StyleSheet.create({
   },
   posterCont: {
     width: "100%",
-    height: "65%",
+    height: "55%",
   },
   movieInfos: {
     flex: 1,
