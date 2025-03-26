@@ -99,8 +99,8 @@ export default function Movies() {
 
       <ScrollView>
         <View style={s.titleCont}>
-          <Text style={[texts.subtitle1, { color: colors.white }]}>
-            Lançamentos:
+          <Text style={[texts.title, { color: colors.white }]}>
+            Em cartaz:
           </Text>
         </View>
 
@@ -132,8 +132,8 @@ export default function Movies() {
                   <View style={{ gap: 5 }}>
                     <View>
                       <Text
-                        style={[texts.ultraB, { color: colors.white }]}
-                        numberOfLines={2}
+                        style={[texts.ultraB, { color: colors.white, fontSize: 17 }]}
+                        numberOfLines={1}
                       >
                         {item.titleMovie}
                       </Text>
@@ -149,7 +149,7 @@ export default function Movies() {
                         texts.text,
                         { color: colors.white, fontSize: 12 },
                       ]}
-                      numberOfLines={3}
+                      numberOfLines={2}
                     >
                       {item.descMovie}
                     </Text>
@@ -203,11 +203,12 @@ const s = StyleSheet.create({
     margin: 15,
   },
   movieCont: {
-    height: 500,
+    height: 400,
     width: 200,
+    borderWidth: 1,
+    borderColor: colors.darkGray,
     borderRadius: 15,
     elevation: 20,
-    backgroundColor: colors.darkGray,
     alignItems: "center",
     overflow: "hidden",
     marginHorizontal: 10,
@@ -222,6 +223,5 @@ const s = StyleSheet.create({
     padding: 10,
     justifyContent: "space-between",
   },
-
   rowMovieCont: {},
 });

@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Alert,
+  Image
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,6 +15,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import texts from "@/src/styles/texts";
 import colors from "@/src/styles/colors";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
+
 //components
 import IconBox from "@/src/components/iconBox";
 import Button from "@/src/components/button";
@@ -80,12 +83,10 @@ export default function Profile() {
 
   return (
     <SafeAreaView style={s.safeArea}>
-      <ImageBackground
-        source={require("@/src/img/profileBg.png")}
-        resizeMode="cover"
+      <LinearGradient
+        colors={[colors.background, colors.darkGray, colors.background]}
         style={s.background}
-        imageStyle={{ opacity: 0.1 }}
-      >
+        >
         <View style={s.cardContainer}>
           <View
             style={{
@@ -123,7 +124,11 @@ export default function Profile() {
             </View>
 
             <View style={s.qrCodeBox}>
-              <FontAwesome6 name="qrcode" size={54} color={colors.gray} />
+              <Image
+                source={require('@/src/img/qrcode.png')}
+                resizeMode="contain"
+                style={{width: '100%', height: '100%'}}
+              />
             </View>
           </View>
 
@@ -132,16 +137,20 @@ export default function Profile() {
               title="Alteral Perfil"
               titleC={colors.white}
               width={"100%"}
+              height={40}
+              padding={5}
               borderW={2}
-              borderR={20}
+              borderR={10}
               borderC={colors.white}
             />
             <Button
               title="Sair"
               titleC={colors.red}
               width={"100%"}
+              height={40}
+              padding={5}
               borderW={2}
-              borderR={20}
+              borderR={10}
               borderC={colors.red}
               onPress={() => handleLogout()}
             />
@@ -164,7 +173,7 @@ export default function Profile() {
             autenticação como usuário.
           </Text>
         </View>
-      </ImageBackground>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
@@ -186,20 +195,22 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: 30,
     backgroundColor: colors.bgContainer,
-    borderWidth: 2,
+    borderLeftWidth: 6,
+    borderBottomWidth: 5,
     borderRadius: 15,
-    borderColor: colors.darkGray,
+    borderColor: "#242424",
     padding: 20,
     width: "75%",
-    elevation: 20,
+    elevation: 10,
   },
 
   qrCodeBox: {
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
-    borderRadius: 5,
+    borderRadius: 10,
+    overflow: 'hidden',
+    width: 150,
+    height: 150,
     borderColor: colors.darkGray,
-    padding: 20,
   },
 });
