@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,11 @@ import {
   ScrollView,
   FlatList,
   StyleSheet,
-  Alert,
   Image,
   ActivityIndicator,
+  Animated,
+  Dimensions,
+  TouchableOpacity,
 } from "react-native";
 
 //styles
@@ -28,12 +30,38 @@ import { FontAwesome } from "@expo/vector-icons";
 import MovieURLs from "@/src/services/urls/movieUrls";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMovieContext } from "@/src/contexts/movieContext";
 
 export default function Movies() {
+  const { movie, setMovie } = useMovieContext();
+  const [selectedMovie, setSelectedMovie] = useState<any>({});
+
   const [token, setToken] = useState<string>("");
   const [latestMovies, setLatestMovies] = useState();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  //drawer animation
+  const screenHeight = Dimensions.get("window").height;
+  const [isOpen, setIsOpen] = useState(false);
+  const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+
+  const toggleDrawer = () => {
+    if (isOpen) {
+      Animated.timing(slideAnim, {
+        toValue: screenHeight,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => setIsOpen(false));
+    } else {
+      setIsOpen(true);
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
 
   useEffect(() => {
     const getToken = async () => {
@@ -54,7 +82,7 @@ export default function Movies() {
     const getLatestMovies = async () => {
       if (!token) return;
 
-      const url = MovieURLs.latest
+      const url = MovieURLs.latest;
       try {
         const response = await axios.post(url, null, {
           headers: { Authorization: `Bearer ${token}` },
@@ -62,7 +90,7 @@ export default function Movies() {
 
         const { movies } = response.data;
         setLatestMovies(movies);
-        setIsLoading(false)
+        setIsLoading(false);
       } catch (error) {
         console.log("Houve um erro ao buscar os últimos lançamentos.", error);
       }
@@ -97,16 +125,41 @@ export default function Movies() {
         }
       />
 
+      {isOpen && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={toggleDrawer}
+          style={s.closeDrawerCont}
+        />
+      )}
+
+      <Animated.View
+        style={[s.drawer, { transform: [{ translateY: slideAnim }] }]}
+      >
+        <Text style={[texts.title, { color: colors.white }]}>Ver Sessões Disponíveis:</Text>
+        <View style={{ flexDirection: 'row', gap: 5, paddingVertical: 20 }}>
+          <View style={{width: 150, height: 200, backgroundColor: colors.darkGray, borderRadius: 10, overflow: 'hidden'}}>
+            <Image
+                      source={{ uri: selectedMovie.moviePoster }}
+                      resizeMode="cover"
+                      style={{ width: "100%", height: "100%" }}
+                    />
+          </View>
+          <View>
+            <Text style={[texts.subtitle1, {color: colors.white}]}>{selectedMovie.titleMovie}</Text>
+            <Text style={[texts.legend, {color: colors.gray}]}>{selectedMovie.creators}</Text>
+          </View>
+        </View>
+      </Animated.View>
+
       <ScrollView>
         <View style={s.titleCont}>
-          <Text style={[texts.title, { color: colors.white }]}>
-            Em cartaz:
-          </Text>
+          <Text style={[texts.title, { color: colors.white }]}>Em cartaz:</Text>
         </View>
 
         {isLoading ? (
           <FlatList
-            data={Array(6).fill(0)} 
+            data={Array(6).fill(0)}
             renderItem={({ index }) => <MovieSkeleton key={index} />}
             keyExtractor={(_, index) => `skeleton-${index}`}
             horizontal
@@ -132,13 +185,19 @@ export default function Movies() {
                   <View style={{ gap: 5 }}>
                     <View>
                       <Text
-                        style={[texts.ultraB, { color: colors.white, fontSize: 17 }]}
+                        style={[
+                          texts.ultraB,
+                          { color: colors.white, fontSize: 17 },
+                        ]}
                         numberOfLines={1}
                       >
                         {item.titleMovie}
                       </Text>
                       <Text
-                        style={[texts.legend, { color: colors.gray, fontSize: 13 }]}
+                        style={[
+                          texts.legend,
+                          { color: colors.gray, fontSize: 13 },
+                        ]}
                         numberOfLines={2}
                       >
                         {item.creators}
@@ -186,6 +245,7 @@ export default function Movies() {
                       borderR={50}
                       height={30}
                       padding={5}
+                      onPress={() => {toggleDrawer(), setSelectedMovie(item)}}
                     />
                   </View>
                 </View>
@@ -224,4 +284,28 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
   rowMovieCont: {},
+  drawer: {
+    zIndex: 1,
+    position: "absolute",
+    bottom: -100,
+    width: '100%',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    height: Dimensions.get("window").height * 0.9, // 40% da altura da tela
+    backgroundColor: "#222",
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    overflow: "hidden",
+
+  },
+
+  closeDrawerCont: {
+    zIndex: 1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
 });

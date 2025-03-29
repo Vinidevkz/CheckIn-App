@@ -19,8 +19,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import {
   Entypo,
   MaterialIcons,
-  AntDesign,
-  Feather,
   FontAwesome6,
 } from "@expo/vector-icons";
 import colors from "@/src/styles/colors";
@@ -41,7 +39,7 @@ export default function Index() {
 
   const handleScroll = (event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
-    const index = Math.round(scrollPosition / screenWidth); // screenWidth é a largura da tela
+    const index = Math.round(scrollPosition / screenWidth); 
     setActiveIndex(index);
   };
 
