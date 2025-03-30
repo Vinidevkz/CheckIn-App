@@ -34,7 +34,7 @@ const Button: React.FC<ButtonProps> = ({title, titleC, width = '100%', height, p
             {isLoading ? (
                 <ActivityIndicator size={'small'} color={colors.gray}/>
             ) : title ? (
-                <Text style={[texts.text,{ color: titleC}]}>
+                <Text style={[texts.text,{ color: titleC, textAlign: 'center'}]}>
                 {title}
                 </Text>
             ) : IconLib && icon ? (

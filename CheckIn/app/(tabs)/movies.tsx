@@ -105,26 +105,34 @@ export default function Movies() {
     getLatestMovies();
   }, [token]);
 
-  const getMovieSessions = async () => {
-    const url = SessionURLs.moveSessions;
-    console.log(url, selectedMovie.idMovie);
-    try {
-      const response = await axios.post(url, {
-        idMovie: selectedMovie.idMovie,
-      });
+  useEffect(() => {
+    const getMovieSessions = async () => {
+      const url = SessionURLs.moveSessions;
+      //console.log(url, selectedMovie.idMovie);
 
-      setSessions(response.data.sessions);
-      console.log("State: ", sessions);
+      try {
+        const response = await axios.post(url, {
+          idMovie: selectedMovie.idMovie,
+        });
 
-      setIsLoadingSession(false);
-    } catch (error) {
-      Alert.alert(
-        "Erro ao buscar sessões.",
-        "Não foi possível encontrar as sessões para o filme escolhido. Tente novamente mais tarde."
-      );
-      console.error("Erro ao buscar sessões:", error);
-    }
-  };
+        if (response.data.sessions && response.data.sessions.length > 0) {
+          setSessions(response.data.sessions);
+          console.log("State: ", response.data.sessions);
+        } else {
+          setSessions([]);
+        }
+      } catch (error) {
+        console.log("State: ", sessions);
+        console.error("Erro ao buscar sessões:", error);
+        setSessions([]);
+      } finally {
+        setIsLoadingSession(false);
+      }
+    };
+
+    getMovieSessions();
+  }, [selectedMovie]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <Header
@@ -166,7 +174,14 @@ export default function Movies() {
           Ver Sessões Disponíveis:
         </Text>
 
-        <View style={{ flexDirection: "row", gap: 5, paddingVertical: 20 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 5,
+            paddingVertical: 20,
+            width: "100%",
+          }}
+        >
           <View
             style={{
               width: 150,
@@ -182,13 +197,59 @@ export default function Movies() {
               style={{ width: "100%", height: "100%" }}
             />
           </View>
-          <View>
-            <Text style={[texts.subtitle1, { color: colors.white }]}>
-              {selectedMovie.titleMovie}
-            </Text>
-            <Text style={[texts.legend, { color: colors.gray }]}>
-              {selectedMovie.creators}
-            </Text>
+          <View style={{ flex: 1, justifyContent: 'space-between' }}>
+            <View>
+              <Text style={[texts.subtitle1, { color: colors.white }]}>
+                {selectedMovie.titleMovie}
+              </Text>
+              <Text style={[texts.legend, { color: colors.gray }]}>
+                {selectedMovie.creators}
+              </Text>
+              <Text style={[texts.legend, { color: colors.white }]}>
+                {selectedMovie.descMovie}
+              </Text>
+            </View>
+
+            <View>
+            <View
+              style={{
+                
+                alignSelf: "flex-start",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                height: 30,
+              }}
+            >
+              <Image
+                source={require("@/src/img/tomatoIcon.png")}
+                resizeMode="cover"
+                style={{ width: 20, height: 20 }}
+              />
+              <Text
+                style={[texts.ultraB, { color: colors.white, paddingTop: 5 }]}
+              >
+                78
+              </Text>
+            </View>
+            <View
+              style={{
+                
+                alignSelf: "flex-start",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                height: 30,
+              }}
+            >
+              <FontAwesome name="star" size={24} color={colors.yellow} />
+              <Text
+                style={[texts.ultraB, { color: colors.white, paddingTop: 5 }]}
+              >
+                26
+              </Text>
+            </View>
+            </View>
           </View>
         </View>
 
@@ -240,15 +301,33 @@ export default function Movies() {
                   </Text>
                 </View>
 
-                <Button
-                  title="Comprar Ingresso"
-                  bgColor={colors.white}
-                  width={"30%"}
-                  borderR={10}
-                  padding={5}
-                />
+                <View style={{alignSelf: 'flex-end'}}>
+                  <Button
+                    title="Comprar Ingresso"
+                    width={"100%"}
+                    borderR={10}
+                    titleC={colors.white}
+                    borderC={colors.yellow}
+                    borderW={2}
+                    padding={8}
+                  />
+                </View>
               </View>
             )}
+            ListEmptyComponent={
+              <View
+                style={{ alignItems: "center", marginTop: 20, width: "100%" }}
+              >
+                <Image
+                  source={require("@/src/img/unksessionsimg.png")}
+                  resizeMode="contain"
+                  style={{ width: "100%", height: 200 }}
+                />
+                <Text style={[texts.subtitle2, { color: colors.white }]}>
+                  Nenhuma sessão disponível para este filme.
+                </Text>
+              </View>
+            }
           />
         )}
       </Animated.View>
@@ -257,6 +336,10 @@ export default function Movies() {
         <View style={s.titleCont}>
           <Text style={[texts.title, { color: colors.white }]}>Em cartaz:</Text>
         </View>
+
+        <Text style={[texts.subtitle1, { color: colors.white }]}>
+          {selectedMovie.idMovie}
+        </Text>
 
         {isLoading ? (
           <FlatList
@@ -348,8 +431,8 @@ export default function Movies() {
                       padding={5}
                       onPress={() => {
                         toggleDrawer(),
-                          setSelectedMovie(item),
-                          getMovieSessions();
+                          setIsLoadingSession(true),
+                          setSelectedMovie(item);
                       }}
                     />
                   </View>
