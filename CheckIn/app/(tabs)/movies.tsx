@@ -11,6 +11,7 @@ import {
   Animated,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 
 //styles
@@ -31,15 +32,20 @@ import MovieURLs from "@/src/services/urls/movieUrls";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMovieContext } from "@/src/contexts/movieContext";
+import SessionURLs from "@/src/services/urls/sessionUrls";
+import SessionSkeleton from "@/src/components/skeletons/sessionSkeleton";
 
 export default function Movies() {
   const { movie, setMovie } = useMovieContext();
   const [selectedMovie, setSelectedMovie] = useState<any>({});
 
+  const [sessions, setSessions] = useState<any>();
+
   const [token, setToken] = useState<string>("");
   const [latestMovies, setLatestMovies] = useState();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoadingSession, setIsLoadingSession] = useState<boolean>(true);
 
   //drawer animation
   const screenHeight = Dimensions.get("window").height;
@@ -99,6 +105,26 @@ export default function Movies() {
     getLatestMovies();
   }, [token]);
 
+  const getMovieSessions = async () => {
+    const url = SessionURLs.moveSessions;
+    console.log(url, selectedMovie.idMovie);
+    try {
+      const response = await axios.post(url, {
+        idMovie: selectedMovie.idMovie,
+      });
+
+      setSessions(response.data.sessions);
+      console.log("State: ", sessions);
+
+      setIsLoadingSession(false);
+    } catch (error) {
+      Alert.alert(
+        "Erro ao buscar sessões.",
+        "Não foi possível encontrar as sessões para o filme escolhido. Tente novamente mais tarde."
+      );
+      console.error("Erro ao buscar sessões:", error);
+    }
+  };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <Header
@@ -136,20 +162,95 @@ export default function Movies() {
       <Animated.View
         style={[s.drawer, { transform: [{ translateY: slideAnim }] }]}
       >
-        <Text style={[texts.title, { color: colors.white }]}>Ver Sessões Disponíveis:</Text>
-        <View style={{ flexDirection: 'row', gap: 5, paddingVertical: 20 }}>
-          <View style={{width: 150, height: 200, backgroundColor: colors.darkGray, borderRadius: 10, overflow: 'hidden'}}>
+        <Text style={[texts.title, { color: colors.white }]}>
+          Ver Sessões Disponíveis:
+        </Text>
+
+        <View style={{ flexDirection: "row", gap: 5, paddingVertical: 20 }}>
+          <View
+            style={{
+              width: 150,
+              height: 200,
+              backgroundColor: colors.darkGray,
+              borderRadius: 10,
+              overflow: "hidden",
+            }}
+          >
             <Image
-                      source={{ uri: selectedMovie.moviePoster }}
-                      resizeMode="cover"
-                      style={{ width: "100%", height: "100%" }}
-                    />
+              source={{ uri: selectedMovie.moviePoster }}
+              resizeMode="cover"
+              style={{ width: "100%", height: "100%" }}
+            />
           </View>
           <View>
-            <Text style={[texts.subtitle1, {color: colors.white}]}>{selectedMovie.titleMovie}</Text>
-            <Text style={[texts.legend, {color: colors.gray}]}>{selectedMovie.creators}</Text>
+            <Text style={[texts.subtitle1, { color: colors.white }]}>
+              {selectedMovie.titleMovie}
+            </Text>
+            <Text style={[texts.legend, { color: colors.gray }]}>
+              {selectedMovie.creators}
+            </Text>
           </View>
         </View>
+
+        {isLoadingSession ? (
+          <FlatList
+            data={Array(6).fill(0)}
+            renderItem={({ index }) => <SessionSkeleton key={index} />}
+            keyExtractor={(_, index) => `skeleton-${index}`}
+            showsHorizontalScrollIndicator={false}
+          />
+        ) : (
+          <FlatList
+            style={{ flex: 1 }}
+            data={sessions}
+            keyExtractor={(item) => item.idSession.toString()}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  borderWidth: 2,
+                  borderRadius: 10,
+                  borderColor: colors.gray,
+                  marginBottom: 20,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: 10,
+                }}
+              >
+                <View>
+                  <Text style={[texts.subtitle2, { color: colors.white }]}>
+                    {item.cinemaSession}
+                  </Text>
+                  <Text style={[texts.legend, { color: colors.white }]}>
+                    {item.dateSession
+                      ? new Date(item.dateSession).toLocaleDateString("pt-BR")
+                      : "Data não disponível"}
+                  </Text>
+                  <Text style={[texts.legend, { color: colors.white }]}>
+                    Assentos disponíveis:{" "}
+                    <Text style={[texts.ultraB, { color: colors.white }]}>
+                      {item.availableSeats}
+                    </Text>
+                  </Text>
+                  <Text style={[texts.legend, { color: colors.white }]}>
+                    Valor do ingresso:{" "}
+                    <Text style={[texts.ultraB, { color: colors.white }]}>
+                      R${item.priceTicket.toFixed(2).replace(".", ",")}
+                    </Text>
+                  </Text>
+                </View>
+
+                <Button
+                  title="Comprar Ingresso"
+                  bgColor={colors.white}
+                  width={"30%"}
+                  borderR={10}
+                  padding={5}
+                />
+              </View>
+            )}
+          />
+        )}
       </Animated.View>
 
       <ScrollView>
@@ -245,7 +346,11 @@ export default function Movies() {
                       borderR={50}
                       height={30}
                       padding={5}
-                      onPress={() => {toggleDrawer(), setSelectedMovie(item)}}
+                      onPress={() => {
+                        toggleDrawer(),
+                          setSelectedMovie(item),
+                          getMovieSessions();
+                      }}
                     />
                   </View>
                 </View>
@@ -288,15 +393,15 @@ const s = StyleSheet.create({
     zIndex: 1,
     position: "absolute",
     bottom: -100,
-    width: '100%',
+    width: "100%",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    height: Dimensions.get("window").height * 0.9, // 40% da altura da tela
+    height: Dimensions.get("window").height * 0.8,
     backgroundColor: "#222",
     paddingHorizontal: 20,
     paddingTop: 50,
     overflow: "hidden",
-
+    marginBottom: 90,
   },
 
   closeDrawerCont: {
