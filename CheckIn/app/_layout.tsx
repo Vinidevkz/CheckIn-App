@@ -46,6 +46,7 @@ export default function RootLayoutNav() {
         <Stack.Screen name="logon" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="logoutLoading" options={{ headerShown: false }} />
+        <Stack.Screen name="selectSeats" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </AuthProvider>

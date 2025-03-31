@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { useRouter } from 'expo-router'
 
 //styles
 import texts from "@/src/styles/texts";
@@ -36,6 +37,8 @@ import SessionURLs from "@/src/services/urls/sessionUrls";
 import SessionSkeleton from "@/src/components/skeletons/sessionSkeleton";
 
 export default function Movies() {
+  const route = useRouter()
+
   const { movie, setMovie } = useMovieContext();
   const [selectedMovie, setSelectedMovie] = useState<any>({});
 
@@ -310,6 +313,7 @@ export default function Movies() {
                     borderC={colors.yellow}
                     borderW={2}
                     padding={8}
+                    onPress={() => route.push('../selectSeats')}
                   />
                 </View>
               </View>
